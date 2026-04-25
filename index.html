@@ -6,7 +6,8 @@
     <title>Solar Orbiting</title>
 
     <!-- Better Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         body {
@@ -61,7 +62,7 @@
         /* GLOWING SUNRISE / SUNSET CARD */
         #sunCalc {
             border: 1px solid rgba(255, 220, 120, 0.18);
-            
+
             position: absolute;
             top: 40px;
             right: 20px;
@@ -70,16 +71,14 @@
             padding: 16px;
             border-radius: 12px;
 
-            background: radial-gradient(
-                circle at top right,
-                rgba(255, 210, 90, 0.22),
-                rgba(255, 255, 255, 0.05) 40%,
-                rgba(255, 255, 255, 0.03) 100%
-            );
+            background: radial-gradient(circle at top right,
+                    rgba(255, 210, 90, 0.22),
+                    rgba(255, 255, 255, 0.05) 40%,
+                    rgba(255, 255, 255, 0.03) 100%);
 
             backdrop-filter: blur(10px);
 
-            
+
 
             box-shadow:
                 0 0 18px rgba(255, 180, 50, 0.10),
@@ -142,8 +141,8 @@
             width: 100%;
             padding: 6px;
 
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 6px;
 
             color: white;
@@ -153,16 +152,16 @@
         }
 
         #sunCalc input:focus {
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         #sunCalc button {
             width: 100%;
             padding: 7px;
 
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
 
             color: white;
             border-radius: 6px;
@@ -173,7 +172,7 @@
         }
 
         #sunCalc button:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         #result {
@@ -380,7 +379,7 @@
             });
         }
 
-       function calculateSun() {
+        function calculateSun() {
             const lat = parseFloat(document.getElementById("lat").value);
             const lon = parseFloat(document.getElementById("lon").value);
 
@@ -389,25 +388,34 @@
                 return;
             }
 
-            const day = new Date().getDay() + 1;
+            // Correct Day of Year
+            const today = new Date();
+            const start = new Date(today.getFullYear(), 0, 0);
+            const diff = today - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const day = Math.floor(diff / oneDay);
 
-            const decl = 23.45 * Math.sin((360/365) * (day - 81) * Math.PI/180);
+            // Solar declination (Aryabhata-style approximation)
+            const decl = 23.45 * Math.sin((360 / 365) * (day - 81) * Math.PI / 180);
 
+            // Hour angle
             const ha = Math.acos(
-                -Math.tan(lat * Math.PI/180) * Math.tan(decl * Math.PI/180)
+                -Math.tan(lat * Math.PI / 180) * Math.tan(decl * Math.PI / 180)
             );
 
-            const daylight = (2 * ha * 180/Math.PI) / 15;
+            // Day length in hours
+            const daylight = (2 * ha * 180 / Math.PI) / 15;
 
-            const sunrise = 12 - daylight/2;
-            const sunset = 12 + daylight/2;
+            // Local solar time
+            const sunrise = 12 - daylight / 2;
+            const sunset = 12 + daylight / 2;
 
-            function fmt(t){
+            function fmt(t) {
                 let h = Math.floor(t);
-                let m = Math.floor((t-h)*60);
-                let ampm = h>=12?"PM":"AM";
-                h = h%12||12;
-                return `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
+                let m = Math.floor((t - h) * 60);
+                let ampm = h >= 12 ? "PM" : "AM";
+                h = h % 12 || 12;
+                return `${h}:${m.toString().padStart(2, '0')} ${ampm}`;
             }
 
             document.getElementById("result").innerHTML =
@@ -416,4 +424,5 @@
     </script>
 
 </body>
+
 </html>
